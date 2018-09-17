@@ -9,7 +9,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
 
-        classpath 'com.novoda:bintray-release:0.8.0'//添加
+        //bintray 插件
+        classpath 'com.novoda:bintray-release:0.8.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -23,8 +24,11 @@ allprojects {
     }
 
     tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.addStringOption('encoding', 'UTF-8')
+        options{
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
     }
 }
 
@@ -32,13 +36,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-//统一声明配置
-ext {
-    userOrg = 'hanxiaofeng'
-    groupId = 'com.fast.apkupdate'
-    uploadName = 'ApkUpdateFast'
-    publishVersion = '1.0.1'
-    desc = 'An android application update library that provides download progress monitoring, silent installation and other functions.'
-    website = 'https://github.com/hanxiaofeng/ApkUpdateFast'
-    licences = ['Apache-2.0']
+//最好加上全局编码设置
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

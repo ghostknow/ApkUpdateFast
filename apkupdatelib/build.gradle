@@ -1,5 +1,24 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release' //添加插件依赖
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'hanxiaofeng'//bintray.com用户名
+    groupId = 'com.fast.update'//jcenter上的路径
+    artifactId = 'ApkUpdateFast'//项目名称
+    publishVersion = '1.0.1'//版本号
+    desc = 'An android application update library that provides download progress monitoring, silent installation and other functions'
+    //描述，不重要
+    website = 'https://github.com/hanxiaofeng/ApkUpdateFast'//网站，最好有，不重要
+    bintrayUser = 'hanxiaofeng'
+    bintrayKey = ''
+    dryRun = false
+}
+
+//https://bintray.com  设置bintray--key
+//点击右侧Gradle,打开apkupdatelib-build >
+//1.执行assembleRelease
+//2.执行publishing > publishReleasePublicationToMavenLocal
+//3.执行publishing > bintrayUpload
 
 android {
     compileSdkVersion 28
@@ -22,6 +41,9 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -41,14 +63,3 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 }
 
-//添加发布模块
-publish {
-    artifactId = 'apkupdatelib'//模块名称
-    userOrg = rootProject.userOrg
-    groupId =   rootProject.groupId
-    uploadName = rootProject.uploadName //模块上传后所在的文件夹名称
-    publishVersion = rootProject.publishVersion//模块版本号
-    desc = rootProject.description//模块的描述
-    website = rootProject.website //模块的网站
-    licences = rootProject.licences //模块的licences
-}
