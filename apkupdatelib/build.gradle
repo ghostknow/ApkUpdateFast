@@ -10,7 +10,7 @@ publish {
     //描述，不重要
     website = 'https://github.com/hanxiaofeng/ApkUpdateFast'//网站，最好有，不重要
     bintrayUser = 'hanxiaofeng'
-    bintrayKey = '0933b44c376a0d012323ba5f5c6b6816ee2d35e4'
+    bintrayKey = ''
     dryRun = false
 }
 
