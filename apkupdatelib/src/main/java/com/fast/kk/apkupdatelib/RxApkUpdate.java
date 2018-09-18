@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
+
+import com.fast.kk.apkupdatelib.utils.RootInstallHelp;
+import com.fast.kk.apkupdatelib.utils.ToastUtils;
 
 import org.reactivestreams.Publisher;
 
@@ -24,6 +24,8 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 public class RxApkUpdate {
+
+    private static int lastProgressValue = 0;
 
     /**
      * 下载进度监听，自己处理
@@ -41,7 +43,7 @@ public class RxApkUpdate {
         String fileName = getRandomName();
         File file = getDefaultPathFile(fileName);
 
-        downLoadFileByListener(url, fileName, file, false, listener);
+        downLoadFileByListener(url, fileName, file, false, false, false, listener);
     }
 
 
@@ -61,17 +63,57 @@ public class RxApkUpdate {
         String fileName = getRandomName();
         File file = getDefaultPathFile(fileName);
 
-        downLoadFileByListener(url, fileName, file, isShowInstallPage, listener);
+        downLoadFileByListener(url, fileName, file, isShowInstallPage, false, false, listener);
     }
+
+    /**
+     * 通知栏更新下载进度
+     */
+    public static void downLoadByNotify(String url, boolean showNotify, final OnDownloadProgressListener listener) {
+
+        if (TextUtils.isEmpty(url)) {
+            throw new IllegalArgumentException("download url can't be null");
+        }
+
+        if (null == listener) {
+            throw new IllegalArgumentException("listener can't be null");
+        }
+
+        String fileName = getRandomName();
+        File file = getDefaultPathFile(fileName);
+
+        downLoadFileByListener(url, fileName, file, true, false, showNotify, listener);
+    }
+
+    /**
+     * autoInstall：是否开启静默安装
+     */
+    public static void downLoadApkAutoInstall(String url, boolean autoInstall, final OnDownloadProgressListener listener) {
+
+        if (TextUtils.isEmpty(url)) {
+            throw new IllegalArgumentException("download url can't be null");
+        }
+
+        if (null == listener) {
+            throw new IllegalArgumentException("listener can't be null");
+        }
+
+        String fileName = getRandomName();
+        File file = getDefaultPathFile(fileName);
+
+        downLoadFileByListener(url, fileName, file, false, autoInstall, false, listener);
+    }
+
 
     /**
      * url: 下载地址
      * fileName：文件名(需待后缀，如：test.apk)
      * file: 文件下载保存路径
      * isShowInstallPage: 自动弹出安装页面
+     * autoInstall: 静默安装(需要root权限)
      * listener: 下载进度监听
      */
-    public static void downLoadFileByListener(String url, String fileName, File file, final boolean isShowInstallPage, final OnDownloadProgressListener listener) {
+    public static void downLoadFileByListener(String url, final String fileName, File file, final boolean isShowInstallPage, final boolean autoInstall, final boolean showNotify, final OnDownloadProgressListener listener) {
 
         if (TextUtils.isEmpty(url)) {
             throw new IllegalArgumentException("download url can't be null");
@@ -95,8 +137,16 @@ public class RxApkUpdate {
                     @Override
                     public void onSuccess(File file) {
                         listener.onDownloadSuccess(file);
-                        if (isShowInstallPage) {
-                            installApk(file);
+
+                        if (autoInstall) {
+                            boolean result = RootInstallHelp.installByRoot(file);
+                            if (!result) {
+                                throw new IllegalStateException("Silent installation failed！");
+                            }
+                        } else {
+                            if (isShowInstallPage) {
+                                installApk(file);
+                            }
                         }
                     }
 
@@ -112,7 +162,14 @@ public class RxApkUpdate {
                             ToastUtils.toastShow("获取文件长度失败，请服务器端设置！");
                             return;
                         }
-                        int percent = (int) (progress * 100 / total);
+                        final int percent = (int) (progress * 100 / total);
+
+                        if (showNotify && lastProgressValue != percent) {
+                            NotificationHelp.notifyDownloading(percent, 100, fileName, R.mipmap.ic_launcher);
+                        }
+
+                        lastProgressValue = percent;
+
                         listener.onProgress(total, progress, percent);
                     }
                 });

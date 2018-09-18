@@ -8,18 +8,13 @@
     <!--在 Android 8.0 中，安装未知应用权限提高了安装未知来源应用时的安全性-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+
     <application
         android:name=".ApkApplication"
         android:allowBackup="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>-->
 
         <!--//自定义名字 为避免重复建议设为：包名.fileprovider-->
         <provider

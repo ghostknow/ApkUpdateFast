@@ -1,4 +1,4 @@
-package com.fast.kk.apkupdatelib;
+package com.fast.kk.apkupdatelib.utils;
 
 import android.app.Application;
 import android.widget.Toast;

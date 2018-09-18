@@ -5,12 +5,12 @@ publish {
     userOrg = 'hanxiaofeng'//bintray.com用户名
     groupId = 'com.fast.update'//jcenter上的路径
     artifactId = 'ApkUpdateFast'//项目名称
-    publishVersion = '1.0.1'//版本号
+    publishVersion = '1.0.2'//版本号
     desc = 'An android application update library that provides download progress monitoring, silent installation and other functions'
     //描述，不重要
     website = 'https://github.com/hanxiaofeng/ApkUpdateFast'//网站，最好有，不重要
     bintrayUser = 'hanxiaofeng'
-    bintrayKey = ''
+    bintrayKey = '0933b44c376a0d012323ba5f5c6b6816ee2d35e4'
     dryRun = false
 }
 
